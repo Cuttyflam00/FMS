@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% load static %}{% block pageContent %}
+<style>
+    main {
+        height: 1005;
+        width: 100%;
+        /* display: flex; */
+        align-items: center;
+        justify-content: center;
+        overflow: auto;
+    }
+</style>
+<div class="row justify-content-center mt-1">
+        <div class="card rounded-0 shadow">   
+                <div class="container-fluid mt-4 text-center">
+                    <h4><b>Please Scan this using your Google Authentication</b></h4>
+                    <img src="{% url 'genQRcode' %}" alt="QR Code">
+                    <a class="nav-link" href="{% url 'home-page' %}">continue</a>
+                </div>
+        </div>
+
+</div>
+{% endblock pageContent %}
+{% block ScriptBlock %}
+{% endblock ScriptBlock %}

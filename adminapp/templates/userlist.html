@@ -1,0 +1,171 @@
+{% extends "base.html" %} {% load humanize %} {% load customfilter %} {% block pageContent %}
+
+<!--Section: Content-->
+<section class="">
+
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="card rounded-0 shadow border-primary text-start summary-card my-3">
+                <div class="card-body">
+                    <div class="d-flex w-100">
+                        <div class="col-8 pe-2">
+                            <div class="summary-title fs-5 border-bottom">Total Users</div>
+                            <div class="summary-count text-end fw-bolder mt-3 px-4">{{ usersLen|intcomma }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="summary-icon p-3 rounded border text-center bg-gradient bg-light">
+                                <i class="fa fa-folder-open fs-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card card-default border rounded-0 shadow">
+                <div class="card-header">
+                    <h4 class="card-title"><b>User Lists</b></h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered" id="file-table">
+                        <colgroup>
+                            <col width="20%">
+                            <col width="40%">
+                            <col width="25%">
+                            <col width="15%">
+                        </colgroup>
+                        <thead>
+                            <tr class="bg-gradient bg-light">
+                                <th class=text-center>First Name</th>
+                                <th class=text-center>Last Name</th>
+                                <th class=text-center>Email</th>
+                                <th class=text-center>Username</th>
+                                <th class=text-center>Action</th>
+                                
+                                <!-- <th class=text-center>Password</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="text-start">{{ user.first_name }}</td>
+                                <td class="text-start">{{ user.last_name }}</td>
+                                <td class="text-start">{{ user.email }}</td>
+                                <td class="text-start">{{ user.username }}</td>
+                                <td class="px-2 py-1 align-middle text-center">
+                                    <!-- <a class="btn btn-outline-primary btn-sm edit-data" href="javascript:void(0)" data-id="{{ .pk }}" title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </a> -->
+                                    <button class="btn btn-outline-danger btn-sm delete-data" type="button" data-id="{{ user.pk }}" title="Delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                                <!-- <td class="text-start">{{ user.password }}</td> -->
+                                <!-- <td class="text-start"><a href="{{ post.file_path.url }}" download="{{ post.file_path|replaceBlank:'uploads/' }}">{{ post.file_path|replaceBlank:'uploads/' }} <i class="fa fa-download"></i></a></td>
+                                <td class="text-center"><button class="btn btn-default bg-gradient btn-sm copy-link" type="button" data-url="{{ request.build_absolute_uri|slice:':-1' }}{{ post.get_share_url }}" title="Copy Link tp clipboard"><i class="fa fa-copy"></i> Share Link</button></td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+</div> {% endblock pageContent %} {% block ScriptBlock %}
+<script>
+    $(function() {
+        $('#file-table').find('td, th').addClass('align-middle px-2 py-1 text-sm')
+        // $('.copy-link').click(function() {
+        //     var input = $('<input class="clip-text">')
+        //     input.val($(this).attr('data-url'))
+        //     $('main').append(input)
+        //     input[0].select()
+        //     input[0].setSelectionRange(0, (input.val()).length)
+        //     var copy = document.execCommand('copy')
+        //     if (copy) {
+        //         alert("Link Copied to Clipboard")
+        //     }
+        //     setTimeout(function() {
+        //         input.remove()
+        //     }, 300)
+        // })
+
+        $('#file-table').dataTable({
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            "pageLength": 25
+        })
+    })
+
+    $(function() {
+        // $('#add_new').click(function() {
+        //     uni_modal('<i class="fa fa-plus"></i> Upload File', '{% url "manage-post" %}', 'modal-md')
+        // })
+        // $('.edit-data').click(function() {
+        //     uni_modal('<i class="fa fa-edit"></i> Edit post', '{% url "manage-post" %}/' + $(this).attr('data-id'), 'modal-md')
+        // })
+        $('.delete-data').click(function() {
+            _conf("Are you sure to delete this User permanently?", "delete_user", [$(this).attr('data-id')])
+        })
+
+        // $('#post-list').DataTable({
+        //     columnDefs: [{
+        //         orderable: false,
+        //         targets: 4
+        //     }],
+        //     initComplete: function(settings, json) {
+        //         $('table td, table th').addClass('px-2 py-1')
+        //     },
+        //     drawCallback: function(settings) {
+        //         $('table td, table th').addClass('px-2 py-1')
+        //     }
+        // })
+    })
+
+    function delete_user($id) {
+        start_loader();
+        var _this = $(this)
+        $('.err-msg').remove();
+        var el = $('<div>')
+        el.addClass("alert alert-danger err-msg")
+        el.hide()
+        $.ajax({
+            url: '{% url "delete-user" %}',
+            headers: {
+                'X-CSRFToken': "{{csrf_token}}"
+            },
+            method: 'POST',
+            data: {
+                id: $id
+            },
+            dataType: 'json',
+            error: err => {
+                console.log(err)
+                el.text('An error occurred.')
+                el.show('slow')
+                end_loader()
+            },
+            success: function(resp) {
+                if (resp.status == 'success') {
+                    location.reload()
+                } else if (!!resp.msg) {
+                    el.text('An error occurred.')
+                    el.show('slow')
+                } else {
+                    el.text('An error occurred.')
+                    el.show('slow')
+                }
+                end_loader()
+            }
+        })
+    }
+</script>
+{% endblock ScriptBlock %}

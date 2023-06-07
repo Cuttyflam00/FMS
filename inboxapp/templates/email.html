@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% block pageContent%}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-10 col-sm-12 col-xs-12">
+            <div class="card shadow rounded-0">
+                <div class="card-header">
+                    <div class="h5 card-title fw-bold">Send Email</div>
+                </div>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="row ">
+								<form method="post" onsubmit="{ sendEmail() }">
+									{% csrf_token %}
+									<div class="mdc-layout-grid">
+										<div class="mdc-layout-grid__inner">
+											<!-- <div class="form-group mb-3">
+												<label for="from" class="control-label">From:</label>
+												<input type="email" class="form-control rounded-0" name="from" id="from" required="required">
+											</div> -->
+											<div class="form-group mb-3">
+												<label for="to" class="control-label">To:</label>
+												<input type="email" class="form-control rounded-0" name="to" id="to" required="required">
+											</div>
+											<div class="form-group mb-3">
+												<label for="subject" class="control-label">Subject:</label>
+												<input type="text" class="form-control rounded-0" name="subject" id="subject" required="required">
+											</div>
+											<div class="form-group mb-3">
+												<label for="message" class="control-label">Message:</label>
+												<textarea class="form-control rounded-0" name="massage" id="message" cols="30" rows="10" required="required"></textarea>
+											</div>
+											{% for field in form %} {% for error in field.errors %}
+											<div class="alert alert-danger my-2">
+												<p>{{ error }}</p>
+											</div>
+											{% endfor %} {% endfor %}
+											<div class="form-group mb-3">
+												<div class="d-flex w-100 justify-content-end">
+													<button type="submit" class="btn btn-sm rounded-0 btn-primary col-4">
+															Send
+														</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script>
+		function sendEmail(){
+			var from = user.email;
+			var to = document.getElementById("to").value;
+			var subject = document.getElementById("subject").value;
+			var message = document.getElementById("message").value;
+			var header = from;
+			if(from != NULL){
+				mail(to,from,subject,message,header)
+			}
+		}
+	</script>
+</div>
+{% endblock pageContent%}
+
+{% block ScriptBlock %}
+
+{% endblock ScriptBlock %}
