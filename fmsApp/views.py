@@ -26,28 +26,30 @@ def login_user(request):
     resp = {"status":'failed','msg':''}
     username = ''
     password = ''
-    otp = ''
+    # otp = ''
     
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
-        otp = request.POST['otp']
-        secret_key = username + 'FMSAPP'
-        print(otp)
+        # otp = request.POST['otp']
+        # secret_key = username + 'FMSAPP'
+        # print(otp)
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
-                if username == 'admin':
-                    login(request, user)
-                else: 
-                    print(otp)
-                    print(secret_key)   
-                    totp = pyotp.TOTP(secret_key)
-                    if totp.verify(otp):
-                        login(request, user)
-                        resp['status']='success'
-                    else:
-                        resp['msg'] = "Incorrect OTP"
+                login(request, user)
+                resp['status']='success'
+                # if username == 'admin':
+                    
+                # else: 
+                #     print(otp)
+                #     print(secret_key)   
+                #     totp = pyotp.TOTP(secret_key)
+                #     if totp.verify(otp):
+                #         login(request, user)
+                       
+                #     else:
+                #         resp['msg'] = "Incorrect OTP"
             else:
                 resp['msg'] = "Incorrect username or password"
         else:
@@ -87,31 +89,31 @@ def registerUser(request):
             pwd = form.cleaned_data.get('password1')
             loginUser = authenticate(username=username, password=pwd)
             login(request, loginUser)
-            return redirect('scanQRcode')
+            return redirect('home-page')
         else:
             context['reg_form'] = form
 
     return render(request, 'register.html', context)
 
 
-def scanQRcode(request):
-    return render(request,'scanQRcode.html',context)
+# def scanQRcode(request):
+#     return render(request,'scanQRcode.html',context)
 
-def genQRcode(request):
-    secret_key = request.user.username + 'FMSAPP'
-    print(secret_key)
-    # Generate the QR code
-    otp_uri = pyotp.totp.TOTP(secret_key).provisioning_uri(name=request.user.username, issuer_name='FMSApp')
-     # Save the image to an in-memory buffer
-    qr = qrcode.make(otp_uri)
-    buffer = io.BytesIO()
-    qr.save(buffer, "qrcode.png")
-    buffer.seek(0)
+# def genQRcode(request):
+#     secret_key = request.user.username + 'FMSAPP'
+#     print(secret_key)
+#     # Generate the QR code
+#     otp_uri = pyotp.totp.TOTP(secret_key).provisioning_uri(name=request.user.username, issuer_name='FMSApp')
+#      # Save the image to an in-memory buffer
+#     qr = qrcode.make(otp_uri)
+#     buffer = io.BytesIO()
+#     qr.save(buffer, "qrcode.png")
+#     buffer.seek(0)
 
-    # Create an HTTP response with the image content type
-    response = HttpResponse(content_type='image/png')
-    response['Content-Disposition'] = 'inline; filename="qrcode.png"'
+#     # Create an HTTP response with the image content type
+#     response = HttpResponse(content_type='image/png')
+#     response['Content-Disposition'] = 'inline; filename="qrcode.png"'
 
-    # Set the content of the response to the image buffer
-    response.write(buffer.getvalue())
-    return response
+#     # Set the content of the response to the image buffer
+#     response.write(buffer.getvalue())
+#     return response

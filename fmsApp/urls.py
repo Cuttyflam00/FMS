@@ -12,8 +12,8 @@ urlpatterns = [
     path('userlogin', views.login_user, name="login-user"),
     path('user-register', views.registerUser, name="register-user"),
     path('logout',views.logoutuser,name='logout'),
-    path('scanQRcode',views.scanQRcode,name='scanQRcode'),
-    path('genQRcode',views.genQRcode,name='genQRcode'),
+    # path('scanQRcode',views.scanQRcode,name='scanQRcode'),
+    # path('genQRcode',views.genQRcode,name='genQRcode'),
     # path('update-avatar',views.update_avatar,name='update-avatar'),
     path('', views.home, name='home-page'),
 ]
